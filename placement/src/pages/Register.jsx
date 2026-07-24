@@ -20,9 +20,12 @@ function Register() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (queryRole && ["student", "admin", "controller"].includes(queryRole)) {
+    if (queryRole && ["student", "admin"].includes(queryRole)) {
       setRole(queryRole);
     }
+    // Future use: if (queryRole && ["student", "admin", "controller"].includes(queryRole)) {
+    //   setRole(queryRole);
+    // }
   }, [queryRole]);
 
   const handleRegister = async () => {
@@ -159,7 +162,7 @@ function Register() {
           >
             <option value="student">Student</option>
             <option value="admin">Admin</option>
-            <option value="controller">Controller</option>
+            {/* Future option: <option value="controller">Controller</option> */}
           </select>
         </div>
 

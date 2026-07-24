@@ -145,7 +145,7 @@ export default function HomeDashboard() {
           </div>
           <div className="navbar-menu">
             <button className="nav-btn" onClick={() => handleDashboardAccess("/student", "student")}>👨‍🎓 Student</button>
-            <button className="nav-btn" onClick={() => handleDashboardAccess("/controller", "controller")}>🛡️ Controller</button>
+            {/* <button className="nav-btn" onClick={() => handleDashboardAccess("/controller", "controller")}>🛡️ Controller</button> */}
             <button className="nav-btn" onClick={() => handleDashboardAccess("/admin", "admin")}>👔 Admin</button>
           </div>
         </div>

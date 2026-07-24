@@ -26,15 +26,24 @@ function Login() {
     }
 
     setLoading(true);
-    console.log("Starting login attempt with:", { email, password });
+    console.log("Starting login attempt with:", { email, password, requestedRole });
     try {
       console.log("Making API call to /api/auth/login");
-      const res = await api.post("/api/auth/login", { email, password });
+      const res = await api.post("/api/auth/login", {
+        email,
+        password,
+        ...(requestedRole ? { role: requestedRole } : {})
+      });
       console.log("API response:", res.data);
       const responseData = res.data?.data || res.data;
       const token = responseData?.token || responseData?.accessToken || responseData?.user?.token;
       const userData = responseData?.user || responseData;
-      const role = responseData?.role || userData?.role || requestedRole || "student";
+      const backendRole = responseData?.role || userData?.role;
+      const role = backendRole || requestedRole || "student";
+
+      if (requestedRole && backendRole && backendRole !== requestedRole) {
+        throw new Error(`This account is not authorized for the ${requestedRole} role.`);
+      }
 
       console.log("Extracted token:", token, "role:", role, "userData:", userData);
 
