@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { Pencil, Trash2 } from "lucide-react";
 import api from "../api";
 import "../styles/AdminDashboard.css";
 
@@ -47,13 +48,13 @@ function AdminDashboard() {
   }, []);
   // State for stats
   const [stats, setStats] = useState([
-    { icon: "👨‍🎓", label: "Total Students Registered", value: 0 },
-    { icon: "🏢", label: "Total Companies", value: 0 },
-    { icon: "📄", label: "Total Job Posts", value: 0 },
-    { icon: "✅", label: "Students Placed", value: 380 },
-    { icon: "⏳", label: "Pending Applications", value: 0 },
-    { icon: "📊", label: "Placement Percentage", value: "30.4%" },
-    { icon: "📅", label: "Upcoming Interviews", value: 42 },
+    { icon: "👨‍🎓", label: "Total Students Registered", value: 0, color: "#4f46e5" },
+    { icon: "🏢", label: "Total Companies", value: 0, color: "#0f766e" },
+    { icon: "📄", label: "Total Job Posts", value: 0, color: "#dc2626" },
+    // { icon: "✅", label: "Students Placed", value: 380, color: "#15803d" },
+    // { icon: "⏳", label: "Pending Applications", value: 0, color: "#d97706" },
+    // { icon: "📊", label: "Placement Percentage", value: "30.4%", color: "#7c3aed" },
+    // { icon: "📅", label: "Upcoming Interviews", value: 42, color: "#be185d" },
   ]);
 
   // State for companies and jobs
@@ -75,6 +76,9 @@ function AdminDashboard() {
 
   // Handle logout
   const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    localStorage.removeItem("user");
     navigate("/");
   };
 
@@ -562,14 +566,14 @@ function AdminDashboard() {
             <div
               key={index}
               className="stat-card"
-              onClick={() => handleStatClick(stat)}
+              style={{ "--accent": stat.color }}
             >
               <div className="stat-icon">{stat.icon}</div>
               <div className="stat-content">
                 <p className="stat-label">{stat.label}</p>
                 <h3 className="stat-value">{stat.value}</h3>
               </div>
-              <div className="stat-hover-indicator">Click to View</div>
+              {/* <div className="stat-hover-indicator">Live Data</div> */}
             </div>
           ))}
         </div>
@@ -609,7 +613,7 @@ function AdminDashboard() {
           <div className="content-grid">
             {/* Add Company Section */}
             <div className="form-section">
-              <h3>➕ Add New Company</h3>
+              <h3>Add New Company</h3>
               <form onSubmit={handleAddCompany} className="admin-form">
                 <div className="form-group">
                   <label>Company Name *</label>
@@ -822,12 +826,15 @@ function AdminDashboard() {
                       </p>
                     )}
                   </div>
-                  <button
-                    className="btn-delete"
-                    onClick={() => handleDeleteCompany(company.id)}
-                  >
-                    Delete
-                  </button>
+                  <div className="student-actions">
+                    <button
+                      className="icon-btn delete-btn"
+                      onClick={() => handleDeleteCompany(company.id)}
+                      title="Delete company"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -872,12 +879,15 @@ function AdminDashboard() {
                       </p>
                     )}
                   </div>
-                  <button
-                    className="btn-delete"
-                    onClick={() => handleDeleteJob(job.id)}
-                  >
-                    Delete
-                  </button>
+                  <div className="student-actions">
+                    <button
+                      className="icon-btn delete-btn"
+                      onClick={() => handleDeleteJob(job.id)}
+                      title="Delete job"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -915,7 +925,7 @@ function AdminDashboard() {
 
           {/* Add/Edit Student Form */}
           <div className="form-section">
-            <h3>{isEditingStudent ? "✏️ Edit Student" : "➕ Add New Student"}</h3>
+            <h3>{isEditingStudent ? "✏️ Edit Student" : "Add New Student"}</h3>
             <form onSubmit={handleAddOrUpdateStudent} className="admin-form">
               <div className="form-group">
                 <label>Name *</label>
@@ -997,13 +1007,10 @@ function AdminDashboard() {
                   </div>
                   <div className="item-details">
                     <p>
+                      <strong>Email:</strong> {stu.email}
+                    </p>
+                    <p>
                       <strong>CGPA:</strong> {stu.cgpa}
-                    </p>
-                    <p>
-                      <strong>Status:</strong> {stu.registrationStatus}
-                    </p>
-                    <p>
-                      <strong>Application:</strong> {stu.applicationStatus}
                     </p>
                     {stu.resume && (
                       <p>
@@ -1016,33 +1023,19 @@ function AdminDashboard() {
                   </div>
                   <div className="student-actions">
                     <button
-                      className="btn-submit"
+                      className="icon-btn edit-btn"
                       onClick={() => handleEditStudent(stu)}
+                      title="Edit student"
                     >
-                      Edit
+                      <Pencil size={16} />
                     </button>
                     <button
-                      className="btn-delete"
+                      className="icon-btn delete-btn"
                       onClick={() => handleDeleteStudent(stu.id)}
+                      title="Delete student"
                     >
-                      Delete
+                      <Trash2 size={16} />
                     </button>
-                    {stu.registrationStatus === "pending" && (
-                      <>
-                        <button
-                          className="btn-submit"
-                          onClick={() => handleApproveStudent(stu.id)}
-                        >
-                          Approve
-                        </button>
-                        <button
-                          className="btn-delete"
-                          onClick={() => handleRejectStudent(stu.id)}
-                        >
-                          Reject
-                        </button>
-                      </>
-                    )}
                   </div>
                 </div>
               ))}
@@ -1051,7 +1044,8 @@ function AdminDashboard() {
         </div>
       )}
 
-      {/* Modal for Detailed Stats */}
+      {/* Modal for Detailed Stats - temporarily disabled */}
+      {/*
       {showModal && selectedStat && (
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -1163,6 +1157,7 @@ function AdminDashboard() {
           </div>
         </div>
       )}
+      */}
     </div>
   );
 }
