@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import api from "../api";
-import "./AdminDashboard.css";
+import "../styles/AdminDashboard.css";
 
 function AdminDashboard() {
   const navigate = useNavigate();
@@ -16,7 +17,6 @@ function AdminDashboard() {
           api.get('/students')
         ]);
 
-        console.log(companiesRes,'companiesRes')
         setCompanies(companiesRes.data);
         setJobs(jobsRes.data);
         setStudents(studentsRes.data);
@@ -30,20 +30,15 @@ function AdminDashboard() {
           return stat;
         }));
       } catch (error) {
-        console.error('Error fetching data from API, using local storage:', error);
-        // Load from localStorage if available
-        const localCompanies = JSON.parse(localStorage.getItem('companies') || '[]');
-        const localJobs = JSON.parse(localStorage.getItem('jobs') || '[]');
-        const localStudents = JSON.parse(localStorage.getItem('students') || '[]');
-        setCompanies(localCompanies);
-        setJobs(localJobs);
-        setStudents(localStudents);
-        const pendingApplicationsCount = localStudents.filter((s) => s.applicationStatus?.toLowerCase() === "applied").length;
+        console.error('Error fetching data from API:', error);
+        setCompanies([]);
+        setJobs([]);
+        setStudents([]);
         setStats(prevStats => prevStats.map(stat => {
-          if (stat.label === "Total Companies") return { ...stat, value: localCompanies.length };
-          if (stat.label === "Total Job Posts") return { ...stat, value: localJobs.length };
-          if (stat.label === "Total Students Registered") return { ...stat, value: localStudents.length };
-          if (stat.label === "Pending Applications") return { ...stat, value: pendingApplicationsCount };
+          if (stat.label === "Total Companies") return { ...stat, value: 0 };
+          if (stat.label === "Total Job Posts") return { ...stat, value: 0 };
+          if (stat.label === "Total Students Registered") return { ...stat, value: 0 };
+          if (stat.label === "Pending Applications") return { ...stat, value: 0 };
           return stat;
         }));
       }
@@ -120,16 +115,16 @@ function AdminDashboard() {
   const handleAddOrUpdateStudent = async (e) => {
     e.preventDefault();
     if (!studentForm.name || !studentForm.email || !studentForm.year || !studentForm.cgpa) {
-      alert("Please fill in name, email, year and CGPA");
+      toast.error("Please fill in name, email, year and CGPA");
       return;
     }
-    
+
     // Check CGPA requirement for new students
     if (!isEditingStudent && parseFloat(studentForm.cgpa) <= 7.8) {
-      alert("Only students with CGPA greater than 7.8 can register!");
+      toast.error("Only students with CGPA greater than 7.8 can register!");
       return;
     }
-    
+
     const newStudent = {
       id: Date.now(),
       ...studentForm,
@@ -141,15 +136,13 @@ function AdminDashboard() {
           s.id === editingStudentId ? response.data : s
         );
         setStudents(updatedStudents);
-        localStorage.setItem('students', JSON.stringify(updatedStudents));
         setIsEditingStudent(false);
         setEditingStudentId(null);
-        alert("Student updated successfully!");
+        toast.success("Student updated successfully!");
       } else {
         const response = await api.post('/students', studentForm);
         const updatedStudents = [...students, response.data];
         setStudents(updatedStudents);
-        localStorage.setItem('students', JSON.stringify(updatedStudents));
         // increment stat
         const updatedStats = stats.map((stat) =>
           stat.label === "Total Students Registered"
@@ -157,22 +150,21 @@ function AdminDashboard() {
             : stat
         );
         setStats(updatedStats);
-        alert("Student added successfully!");
+        toast.success("Student added successfully!");
       }
     } catch (error) {
-      console.error('API error, storing locally:', error);
+      console.error('API error:', error);
       if (isEditingStudent) {
         setStudents(
           students.map((s) =>
             s.id === editingStudentId ? newStudent : s
           )
         );
-        alert("Student updated locally (API unavailable)!");
+        toast.error("Student update failed. Please try again.");
       } else {
         setStudents([...students, newStudent]);
-        alert("Student added locally (API unavailable)!");
+        toast.error("Student add failed. Please try again.");
       }
-      localStorage.setItem('students', JSON.stringify([...students, newStudent]));
     }
     setStudentForm({
       name: "",
@@ -213,17 +205,10 @@ function AdminDashboard() {
           : stat
       );
       setStats(updatedStats);
+      toast.success("Student deleted successfully!");
     } catch (error) {
-      console.error('API error, deleting locally:', error);
-      setStudents(students.filter((s) => s.id !== id));
-      localStorage.setItem('students', JSON.stringify(students.filter((s) => s.id !== id)));
-      const updatedStats = stats.map((stat) =>
-        stat.label === "Total Students Registered"
-          ? { ...stat, value: students.length - 1 }
-          : stat
-      );
-      setStats(updatedStats);
-      alert("Student deleted locally (API unavailable)!");
+      console.error('API error:', error);
+      toast.error("Student delete failed. Please try again.");
     }
   };
 
@@ -236,17 +221,10 @@ function AdminDashboard() {
           s.id === id ? { ...s, registrationStatus: "approved" } : s
         )
       );
+      toast.success("Student approved!");
     } catch (error) {
-      console.error('API error, updating locally:', error);
-      setStudents(
-        students.map((s) =>
-          s.id === id ? { ...s, registrationStatus: "approved" } : s
-        )
-      );
-      localStorage.setItem('students', JSON.stringify(students.map((s) =>
-        s.id === id ? { ...s, registrationStatus: "approved" } : s
-      )));
-      alert("Student approved locally (API unavailable)!");
+      console.error('API error:', error);
+      toast.error("Student approval failed. Please try again.");
     }
   };
   const handleRejectStudent = async (id) => {
@@ -257,17 +235,10 @@ function AdminDashboard() {
           s.id === id ? { ...s, registrationStatus: "rejected" } : s
         )
       );
+      toast.success("Student rejected!");
     } catch (error) {
-      console.error('API error, updating locally:', error);
-      setStudents(
-        students.map((s) =>
-          s.id === id ? { ...s, registrationStatus: "rejected" } : s
-        )
-      );
-      localStorage.setItem('students', JSON.stringify(students.map((s) =>
-        s.id === id ? { ...s, registrationStatus: "rejected" } : s
-      )));
-      alert("Student rejected locally (API unavailable)!");
+      console.error('API error:', error);
+      toast.error("Student rejection failed. Please try again.");
     }
   };
 
@@ -299,21 +270,21 @@ function AdminDashboard() {
       companyForm.phone &&
       companyForm.location
     ) {
-      const newCompany = {
-        id: Date.now(),
-        ...companyForm,
-      };
       try {
         const response = await api.post('/companies', companyForm);
-        const updatedCompanies = [...companies, response.data];
-        setCompanies(updatedCompanies);
-        localStorage.setItem('companies', JSON.stringify(updatedCompanies));
-        alert("Company added successfully!");
+        const newCompany = response.data;
+        setCompanies(prevCompanies => [...prevCompanies, newCompany]);
+        setStats(prevStats =>
+          prevStats.map((stat) =>
+            stat.label === "Total Companies"
+              ? { ...stat, value: stat.value + 1 }
+              : stat
+          )
+        );
+        toast.success("Company added successfully!");
       } catch (error) {
-        console.error('API error, storing locally:', error);
-        setCompanies([...companies, newCompany]);
-        localStorage.setItem('companies', JSON.stringify([...companies, newCompany]));
-        alert("Company added locally (API unavailable)!");
+        console.error('API error:', error);
+        toast.error("Company add failed. Please try again.");
       }
       setCompanyForm({
         name: "",
@@ -323,15 +294,8 @@ function AdminDashboard() {
         location: "",
         industry: "",
       });
-      // Update stats
-      const updatedStats = stats.map((stat) =>
-        stat.label === "Total Companies"
-          ? { ...stat, value: companies.length + 1 }
-          : stat
-      );
-      setStats(updatedStats);
     } else {
-      alert("Please fill in all required fields");
+      toast.error("Please fill in all required company fields");
     }
   };
 
@@ -344,21 +308,21 @@ function AdminDashboard() {
       jobForm.salary &&
       jobForm.location
     ) {
-      const newJob = {
-        id: Date.now(),
-        ...jobForm,
-      };
       try {
         const response = await api.post('/jobs', jobForm);
-        const updatedJobs = [...jobs, response.data];
-        setJobs(updatedJobs);
-        localStorage.setItem('jobs', JSON.stringify(updatedJobs));
-        alert("Job posted successfully!");
+        const newJob = response.data;
+        setJobs(prevJobs => [...prevJobs, newJob]);
+        setStats(prevStats =>
+          prevStats.map((stat) =>
+            stat.label === "Total Job Posts"
+              ? { ...stat, value: stat.value + 1 }
+              : stat
+          )
+        );
+        toast.success("Job posted successfully!");
       } catch (error) {
-        console.error('API error, storing locally:', error);
-        setJobs([...jobs, newJob]);
-        localStorage.setItem('jobs', JSON.stringify([...jobs, newJob]));
-        alert("Job posted locally (API unavailable)!");
+        console.error('API error:', error);
+        toast.error("Job post failed. Please try again.");
       }
       setJobForm({
         title: "",
@@ -369,15 +333,8 @@ function AdminDashboard() {
         description: "",
         deadline: "",
       });
-      // Update stats
-      const updatedStats = stats.map((stat) =>
-        stat.label === "Total Job Posts"
-          ? { ...stat, value: jobs.length + 1 }
-          : stat
-      );
-      setStats(updatedStats);
     } else {
-      alert("Please fill in all required fields");
+      toast.error("Please fill in all required job fields");
     }
   };
 
@@ -392,17 +349,10 @@ function AdminDashboard() {
           : stat
       );
       setStats(updatedStats);
+      toast.success("Company deleted successfully!");
     } catch (error) {
-      console.error('API error, deleting locally:', error);
-      setCompanies(companies.filter((company) => company.id !== id));
-      localStorage.setItem('companies', JSON.stringify(companies.filter((company) => company.id !== id)));
-      const updatedStats = stats.map((stat) =>
-        stat.label === "Total Companies"
-          ? { ...stat, value: companies.length - 1 }
-          : stat
-      );
-      setStats(updatedStats);
-      alert("Company deleted locally (API unavailable)!");
+      console.error('API error:', error);
+      toast.error("Company delete failed. Please try again.");
     }
   };
 
@@ -417,17 +367,10 @@ function AdminDashboard() {
           : stat
       );
       setStats(updatedStats);
+      toast.success("Job deleted successfully!");
     } catch (error) {
-      console.error('API error, deleting locally:', error);
-      setJobs(jobs.filter((job) => job.id !== id));
-      localStorage.setItem('jobs', JSON.stringify(jobs.filter((job) => job.id !== id)));
-      const updatedStats = stats.map((stat) =>
-        stat.label === "Total Job Posts"
-          ? { ...stat, value: jobs.length - 1 }
-          : stat
-      );
-      setStats(updatedStats);
-      alert("Job deleted locally (API unavailable)!");
+      console.error('API error:', error);
+      toast.error("Job delete failed. Please try again.");
     }
   };
 
@@ -596,14 +539,14 @@ function AdminDashboard() {
             <p>Manage companies, jobs, and oversee placement portal statistics</p>
           </div>
           <div className="header-buttons">
-            <button 
-              className="btn-home" 
+            <button
+              className="btn-home"
               onClick={() => navigate("/")}
             >
               🏠 Home
             </button>
-            <button 
-              className="btn-logout" 
+            <button
+              className="btn-logout"
               onClick={handleLogout}
             >
               🚪 Logout
@@ -616,8 +559,8 @@ function AdminDashboard() {
       <div className="dashboard-overview">
         <div className="stats-grid">
           {stats.map((stat, index) => (
-            <div 
-              key={index} 
+            <div
+              key={index}
               className="stat-card"
               onClick={() => handleStatClick(stat)}
             >

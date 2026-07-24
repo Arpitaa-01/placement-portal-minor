@@ -1,19 +1,29 @@
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, Link, useLocation, useSearchParams } from "react-router-dom";
 import api from "../api";
 import { FaUser, FaEnvelope, FaLock, FaMoon, FaSun, FaUserCheck } from "react-icons/fa";
 
 function Register() {
+  const [searchParams] = useSearchParams();
+  const location = useLocation();
+  const queryRole = (searchParams.get("role") || location.state?.requestedRole || "").toLowerCase();
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [role, setRole] = useState("student");
+  const [role, setRole] = useState(queryRole || "student");
   const [darkMode, setDarkMode] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (queryRole && ["student", "admin", "controller"].includes(queryRole)) {
+      setRole(queryRole);
+    }
+  }, [queryRole]);
 
   const handleRegister = async () => {
     setError("");
@@ -81,11 +91,6 @@ function Register() {
 
   return (
     <div className={darkMode ? "page dark" : "page"}>
-      {/* Floating Shapes */}
-      <div className="shape shape1"></div>
-      <div className="shape shape2"></div>
-      <div className="shape shape3"></div>
-
       <div className="register-card">
         <div className="top-bar">
           <h2>🎓 Create Account</h2>
@@ -167,7 +172,7 @@ function Register() {
 
         <p className="login-link">
           Already have an account?{" "}
-          <Link to="/">Login here</Link>
+          <Link to={queryRole ? `/login?role=${queryRole}` : "/login"}>Login here</Link>
         </p>
       </div>
 
@@ -180,48 +185,32 @@ function Register() {
           position: relative;
           overflow: hidden;
           font-family: 'Segoe UI', sans-serif;
-          background: linear-gradient(-45deg, #6a11cb, #2575fc, #ff6a00, #ee0979);
-          background-size: 400% 400%;
-          animation: gradientMove 10s ease infinite;
+          background: #f1f5f9;
+          transition: background 0.3s ease;
         }
 
         .dark {
-          filter: brightness(0.9);
-        }
-
-        @keyframes gradientMove {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-
-        .shape {
-          position: absolute;
-          border-radius: 50%;
-          background: rgba(255,255,255,0.2);
-          animation: float 6s ease-in-out infinite;
-        }
-
-        .shape1 { width: 200px; height: 200px; top: 10%; left: 10%; }
-        .shape2 { width: 150px; height: 150px; bottom: 15%; right: 10%; }
-        .shape3 { width: 100px; height: 100px; top: 70%; left: 40%; }
-
-        @keyframes float {
-          0%,100% { transform: translateY(0px); }
-          50% { transform: translateY(-30px); }
+          background: #0f172a;
         }
 
         .register-card {
-          width: 400px;
-          padding: 40px;
+          width: 440px;
+          max-width: 90%;
+          padding: 24px 30px;
           border-radius: 20px;
-          background: rgba(255,255,255,0.15);
-          backdrop-filter: blur(20px);
-          box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-          color: white;
+          background: #ffffff;
+          box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+          color: #1e293b;
+          border: 1px solid #e2e8f0;
           z-index: 10;
-          max-height: 95vh;
-          overflow-y: auto;
+          transition: all 0.3s ease;
+        }
+
+        .dark .register-card {
+          background: #1e293b;
+          box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+          color: #f8fafc;
+          border: 1px solid #334155;
         }
 
         .top-bar {
@@ -230,19 +219,45 @@ function Register() {
           align-items: center;
         }
 
+        .top-bar h2 {
+          font-size: 20px;
+          margin: 0;
+        }
+
         .subtitle {
-          font-size: 14px;
-          margin-bottom: 20px;
+          font-size: 13px;
+          margin-top: 4px;
+          margin-bottom: 14px;
           opacity: 0.8;
         }
 
         .input-group {
           display: flex;
           align-items: center;
-          background: rgba(255,255,255,0.2);
-          padding: 10px;
+          width: 100%;
+          box-sizing: border-box;
+          background: #f8fafc;
+          border: 1px solid #cbd5e1;
+          padding: 9px 12px;
           border-radius: 10px;
-          margin-bottom: 15px;
+          margin-bottom: 11px;
+          gap: 10px;
+          transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .dark .input-group {
+          background: #0f172a;
+          border: 1px solid #334155;
+        }
+
+        .input-group:focus-within {
+          border-color: #4f46e5;
+          box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+        }
+
+        .dark .input-group:focus-within {
+          border-color: #818cf8;
+          box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.2);
         }
 
         .input-group input,
@@ -250,69 +265,77 @@ function Register() {
           border: none;
           outline: none;
           background: transparent;
-          color: white;
-          margin-left: 10px;
+          color: inherit;
+          margin: 0;
+          padding: 0;
           width: 100%;
           font-size: 14px;
+          line-height: 1.4;
+          display: block;
         }
 
         .input-group select {
           cursor: pointer;
         }
 
-        .input-group input::placeholder {
-          color: rgba(255, 255, 255, 0.7);
-        }
-
-        .role-select {
-          color: white;
-        }
-
         .role-select option {
-          background: #333;
-          color: white;
+          background: #ffffff;
+          color: #1e293b;
+        }
+
+        .dark .role-select option {
+          background: #1e293b;
+          color: #f8fafc;
         }
 
         .icon {
-          color: white;
-          min-width: 20px;
+          color: #64748b;
+          font-size: 15px;
+          flex-shrink: 0;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .dark .icon {
+          color: #94a3b8;
         }
 
         .error-msg {
-          color: #ff6b6b;
+          color: #ef4444;
           font-size: 13px;
-          margin-bottom: 15px;
-          padding: 10px;
-          background: rgba(255, 107, 107, 0.2);
+          margin-bottom: 11px;
+          padding: 8px 10px;
+          background: rgba(239, 68, 68, 0.1);
           border-radius: 5px;
           text-align: center;
         }
 
         .success-msg {
-          color: #51cf66;
+          color: #10b981;
           font-size: 13px;
-          margin-bottom: 15px;
-          padding: 10px;
-          background: rgba(81, 207, 102, 0.2);
+          margin-bottom: 11px;
+          padding: 8px 10px;
+          background: rgba(16, 185, 129, 0.1);
           border-radius: 5px;
           text-align: center;
         }
 
         .register-btn {
           width: 100%;
-          padding: 12px;
+          padding: 10px;
           border-radius: 10px;
           border: none;
-          background: white;
-          color: #6a11cb;
+          background: #4f46e5;
+          color: white;
           font-weight: 600;
           cursor: pointer;
-          transition: 0.3s;
-          font-size: 15px;
+          transition: background 0.2s;
+          font-size: 14px;
         }
 
         .register-btn:hover:not(:disabled) {
-          transform: scale(1.05);
+          background: #4338ca;
         }
 
         .register-btn:disabled {
@@ -321,17 +344,22 @@ function Register() {
         }
 
         .login-link {
-          margin-top: 15px;
+          margin-top: 12px;
+          margin-bottom: 0;
           text-align: center;
-          font-size: 14px;
+          font-size: 13px;
           opacity: 0.9;
         }
 
         .login-link a {
-          color: #ffeb3b;
+          color: #4f46e5;
           text-decoration: none;
           font-weight: 600;
-          transition: 0.3s;
+          transition: 0.2s;
+        }
+
+        .dark .login-link a {
+          color: #818cf8;
         }
 
         .login-link a:hover {
@@ -341,7 +369,7 @@ function Register() {
         .toggle {
           background: transparent;
           border: none;
-          color: white;
+          color: inherit;
           cursor: pointer;
           font-size: 18px;
         }
@@ -349,7 +377,7 @@ function Register() {
         @media (max-width: 480px) {
           .register-card {
             width: 90%;
-            padding: 30px;
+            padding: 20px;
           }
         }
       `}</style>

@@ -44,7 +44,7 @@ const ControllerDashboard = () => {
     const updatedApplications = applications.map((app) =>
       app.id === id ? { ...app, status } : app
     );
-    
+
     setApplications(updatedApplications);
 
     const total = updatedApplications.length;
@@ -53,7 +53,7 @@ const ControllerDashboard = () => {
     const pending = updatedApplications.filter(a => a.status === "pending").length;
 
     setStats({ total, approved, rejected, pending });
-    
+
     alert("Status Updated Successfully");
   };
 
@@ -151,7 +151,7 @@ const ControllerDashboard = () => {
                     <span className={`badge 
                       ${app.status === "approved" ? "bg-success" :
                         app.status === "rejected" ? "bg-danger" :
-                        "bg-warning text-dark"}`}>
+                          "bg-warning text-dark"}`}>
                       {app.status}
                     </span>
                   </td>

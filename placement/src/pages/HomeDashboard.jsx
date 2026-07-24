@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
-import "./HomeDashboard.css";
+import "../styles/HomeDashboard.css";
 import logo from '../picture/logo.png';
 
 export default function HomeDashboard() {
   const navigate = useNavigate();
-  
+
   const handleDashboardAccess = (dashboard, role) => {
     // Redirect to login for all dashboard access with role and redirect info
-    navigate("/login", { state: { redirectTo: dashboard, requestedRole: role } });
+    navigate(`/login?role=${role}`, { state: { redirectTo: dashboard, requestedRole: role } });
   };
   const [stats] = useState({
     totalStudents: 450,
@@ -341,7 +341,7 @@ export default function HomeDashboard() {
         </div>
       )}
 
-      
+
       <section className="jobs-section">
         <h2 className="section-title">💼 Recent Job Openings</h2>
         <div className="jobs-grid">

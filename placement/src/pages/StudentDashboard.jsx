@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import api from "../api";
-import "./StudentDashboard.css";
+import "../styles/StudentDashboard.css";
 
 function StudentDashboard() {
   const navigate = useNavigate();
@@ -112,9 +113,9 @@ function StudentDashboard() {
 
   const handleSaveProfile = async (e) => {
     e.preventDefault(); // Prevent form submission and page refresh
-    
+
     if (!profileForm.name || !profileForm.email || !profileForm.enrollment || !profileForm.course || !profileForm.batchYear || !profileForm.resume) {
-      alert("Please complete all required profile fields before saving.");
+      toast.error("Please complete all required profile fields before saving.");
       return;
     }
 
@@ -151,6 +152,7 @@ function StudentDashboard() {
     setStudentProfile(updatedProfile);
     setProfileForm(updatedProfile);
     setIsEditingProfile(false);
+    toast.success("Profile saved successfully.");
     setSuccessMessage("Profile saved successfully.");
     setTimeout(() => setSuccessMessage(""), 3000);
   };
