@@ -26,15 +26,12 @@ function Login() {
     }
 
     setLoading(true);
-    console.log("Starting login attempt with:", { email, password, requestedRole });
     try {
-      console.log("Making API call to /api/auth/login");
       const res = await api.post("/api/auth/login", {
         email,
         password,
         ...(requestedRole ? { role: requestedRole } : {})
       });
-      console.log("API response:", res.data);
       const responseData = res.data?.data || res.data;
       const token = responseData?.token || responseData?.accessToken || responseData?.user?.token;
       const userData = responseData?.user || responseData;
@@ -45,7 +42,6 @@ function Login() {
         throw new Error(`This account is not authorized for the ${requestedRole} role.`);
       }
 
-      console.log("Extracted token:", token, "role:", role, "userData:", userData);
 
       if (!token) {
         throw new Error("Login did not return a valid auth token.");
@@ -60,7 +56,6 @@ function Login() {
         console.log("Stored user data:", userData);
       }
 
-      console.log("About to navigate to role:", role);
       if (redirectTo) {
         navigate(redirectTo);
       } else {
