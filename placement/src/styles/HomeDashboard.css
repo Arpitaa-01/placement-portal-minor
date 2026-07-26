@@ -517,18 +517,22 @@
   font-size: 1.2rem;
   margin: 8px 0;
   line-height: 1.6;
-  color: #ff0000; /* Bright red for visibility */
+  color: #ff0000;
+  /* Bright red for visibility */
   font-weight: bold;
-  background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+  background-color: rgba(255, 255, 255, 0.8);
+  /* Semi-transparent white background */
   padding: 5px;
   border-radius: 5px;
 }
 
 .contact-details a {
-  color: #ff0000; /* Bright red for visibility */
+  color: #ff0000;
+  /* Bright red for visibility */
   text-decoration: underline;
   font-weight: bold;
-  background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+  background-color: rgba(255, 255, 255, 0.8);
+  /* Semi-transparent white background */
   padding: 5px;
   border-radius: 5px;
 }
@@ -708,6 +712,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -715,6 +720,8 @@
 
 .modal-content {
   background: white;
+  border-radius: 10px !important;
+
   border-radius: 15px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   max-height: 90vh;
@@ -727,6 +734,7 @@
     transform: translateY(30px);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;

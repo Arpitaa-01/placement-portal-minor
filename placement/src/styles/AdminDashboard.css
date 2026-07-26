@@ -699,7 +699,7 @@
 
 .modal-content {
   background: #ffffff;
-  border-radius: 20px;
+  border-radius: 10px !important;
   max-width: 640px;
   width: 92%;
   max-height: 95vh;

@@ -791,7 +791,7 @@
 
 .modal-content {
   background: var(--white);
-  border-radius: 16px;
+  border-radius: 10px !important;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
   width: 100%;
   max-width: 500px;

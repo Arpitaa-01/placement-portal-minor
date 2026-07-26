@@ -1,6 +1,6 @@
 import { FileText } from "lucide-react";
 
-function RecommendedJobs({ studentProfile, allJobsList, allJobs, appliedJobsList, setActiveSection, setViewingJobDesc, handleApplyJob }) {
+function RecommendedJobs({ studentProfile, allJobsList, appliedJobsList, setActiveSection, setViewingJobDesc, handleApplyJob }) {
   const isProfileComplete = studentProfile &&
     studentProfile.batchYear && studentProfile.batchYear.trim() !== "" &&
     studentProfile.cgpa && parseFloat(studentProfile.cgpa) > 0 &&
@@ -46,7 +46,7 @@ function RecommendedJobs({ studentProfile, allJobsList, allJobs, appliedJobsList
     );
   }
 
-  const displayJobs = allJobsList.length > 0 ? allJobsList : (allJobs || []);
+  const displayJobs = allJobsList || [];
   const recommendedJobs = displayJobs.filter(job => {
     // 1. Batch check
     let batchMatch = true;

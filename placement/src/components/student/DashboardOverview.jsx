@@ -1,8 +1,8 @@
 import RecommendedJobs from "./RecommendedJobs";
 
-function DashboardOverview({ allJobsList, allJobs, appliedJobsList, appliedJobs, studentProfile, setActiveSection, setViewingJobDesc, handleApplyJob }) {
-  const totalJobsCount = (allJobsList && allJobsList.length > 0) ? allJobsList.length : (allJobs ? allJobs.length : 0);
-  const jobsAppliedCount = (appliedJobsList && appliedJobsList.length > 0) ? appliedJobsList.length : (appliedJobs ? appliedJobs.length : 0);
+function DashboardOverview({ allJobsList, appliedJobsList, studentProfile, setActiveSection, setViewingJobDesc, handleApplyJob }) {
+  const totalJobsCount = allJobsList?.length ?? 0;
+  const jobsAppliedCount = appliedJobsList?.length ?? 0;
 
   const stats = [
     { icon: "📄", label: "Total Jobs Available", value: totalJobsCount },
@@ -26,7 +26,6 @@ function DashboardOverview({ allJobsList, allJobs, appliedJobsList, appliedJobs,
       <RecommendedJobs
         studentProfile={studentProfile}
         allJobsList={allJobsList}
-        allJobs={allJobs}
         appliedJobsList={appliedJobsList}
         setActiveSection={setActiveSection}
         setViewingJobDesc={setViewingJobDesc}

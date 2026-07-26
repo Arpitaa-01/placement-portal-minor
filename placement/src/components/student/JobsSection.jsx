@@ -2,7 +2,6 @@ import { FileText } from "lucide-react";
 
 function JobsSection({
   allJobsList,
-  allJobs,
   appliedJobsList,
   jobsSubTab,
   setJobsSubTab,
@@ -10,7 +9,7 @@ function JobsSection({
   handleApplyJob,
   handleRevokeApplication,
 }) {
-  const displayJobs = allJobsList.length > 0 ? allJobsList : allJobs;
+  const displayJobs = allJobsList || [];
 
   return (
     <div className="section-content">

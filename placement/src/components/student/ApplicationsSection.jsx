@@ -1,5 +1,5 @@
-function ApplicationsSection({ appliedJobsList, appliedJobs, setActiveSection, setJobsSubTab, handleRevokeApplication }) {
-  const displayList = (appliedJobsList && appliedJobsList.length > 0) ? appliedJobsList : (appliedJobs || []);
+function ApplicationsSection({ appliedJobsList, setActiveSection, setJobsSubTab, handleRevokeApplication }) {
+  const displayList = appliedJobsList || [];
 
   return (
     <div className="section-content">
