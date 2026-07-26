@@ -23,9 +23,6 @@ function Register() {
     if (queryRole && ["student", "admin"].includes(queryRole)) {
       setRole(queryRole);
     }
-    // Future use: if (queryRole && ["student", "admin", "controller"].includes(queryRole)) {
-    //   setRole(queryRole);
-    // }
   }, [queryRole]);
 
   const handleRegister = async () => {
@@ -162,7 +159,6 @@ function Register() {
           >
             <option value="student">Student</option>
             <option value="admin">Admin</option>
-            {/* Future option: <option value="controller">Controller</option> */}
           </select>
         </div>
 

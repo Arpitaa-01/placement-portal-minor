@@ -4,7 +4,6 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import StudentDashboard from "./pages/StudentDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
-import ControllerDashboard from "./pages/ControllerDashboard";
 import HomeDashboard from "./pages/HomeDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -29,14 +28,6 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={["admin"]}>
               <AdminDashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/controller"
-          element={
-            <ProtectedRoute allowedRoles={["controller"]}>
-              <ControllerDashboard />
             </ProtectedRoute>
           }
         />

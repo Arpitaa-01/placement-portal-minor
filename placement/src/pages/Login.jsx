@@ -61,7 +61,6 @@ function Login() {
       } else {
         if (role === "student") navigate("/student");
         else if (role === "admin") navigate("/admin");
-        else if (role === "controller") navigate("/controller");
         else navigate("/");
       }
     } catch (err) {

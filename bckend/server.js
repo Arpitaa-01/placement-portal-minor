@@ -3,9 +3,7 @@ const cors = require("cors");
 const { initializeDatabase } = require("./database");
 
 const authRoutes = require("./routes/auth");
-const studentRoutes = require("./routes/student");
 const adminRoutes = require("./routes/admin");
-const controllerRoutes = require("./routes/controller");
 const companiesRoutes = require("./routes/companies");
 const jobsRoutes = require("./routes/jobs");
 const studentsRoutes = require("./routes/students");
@@ -19,9 +17,7 @@ initializeDatabase();
 
 // ROUTES
 app.use("/api/auth", authRoutes);
-app.use("/api/student", studentRoutes);
 app.use("/api/admin", adminRoutes);
-app.use("/api/controller", controllerRoutes);
 
 // Resource routes (mounted on both root and /api/ prefixes for consistency)
 app.use("/companies", companiesRoutes);
